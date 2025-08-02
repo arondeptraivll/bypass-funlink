@@ -27,6 +27,7 @@
             align-items: center;
             font-family: 'Poppins', sans-serif;
             animation: fadeIn 0.5s ease-in;
+            transition: opacity 0.3s ease;
         }
 
         @keyframes fadeIn {
@@ -214,10 +215,21 @@
         .gemlogin-overlay {
             pointer-events: auto;
         }
+
+        /* Automation mode styles */
+        .gemlogin-overlay.automation-mode {
+            opacity: 0.3;
+            pointer-events: none;
+        }
+
+        .gemlogin-overlay.user-mode {
+            opacity: 1;
+            pointer-events: auto;
+        }
     </style>
 </head>
 <body>
-    <div class="gemlogin-overlay" id="gemloginOverlay">
+    <div class="gemlogin-overlay user-mode" id="gemloginOverlay">
         <div class="gemlogin-warning-box">
             <div class="gemlogin-warning-icon">⚠️</div>
             <h1 class="gemlogin-title">GEMLOGIN TOOL</h1>
@@ -237,92 +249,247 @@
     </div>
 
     <script>
+        // 🤖 AUTOMATION BYPASS FUNCTIONS
+        window.gemloginHideOverlay = function() {
+            var overlay = document.getElementById('gemloginOverlay');
+            if (overlay) {
+                overlay.classList.remove('user-mode');
+                overlay.classList.add('automation-mode');
+                overlay.style.pointerEvents = 'none';
+                overlay.style.opacity = '0.3';
+                console.log('🤖 Gemlogin Overlay: Automation mode enabled');
+            }
+        };
+
+        window.gemloginShowOverlay = function() {
+            var overlay = document.getElementById('gemloginOverlay');
+            if (overlay) {
+                overlay.classList.remove('automation-mode');
+                overlay.classList.add('user-mode');
+                overlay.style.pointerEvents = 'auto';
+                overlay.style.opacity = '1';
+                console.log('🛡️ Gemlogin Overlay: User protection mode enabled');
+            }
+        };
+
+        // 🔧 UTILITY FUNCTIONS
+        window.gemloginToggleOverlay = function() {
+            var overlay = document.getElementById('gemloginOverlay');
+            if (overlay) {
+                if (overlay.classList.contains('automation-mode')) {
+                    window.gemloginShowOverlay();
+                } else {
+                    window.gemloginHideOverlay();
+                }
+            }
+        };
+
+        window.gemloginGetStatus = function() {
+            var overlay = document.getElementById('gemloginOverlay');
+            if (overlay) {
+                return overlay.classList.contains('automation-mode') ? 'automation' : 'user-protection';
+            }
+            return 'unknown';
+        };
+
         // Block all user interactions
         document.addEventListener('DOMContentLoaded', function() {
+            console.log('🛡️ Gemlogin Tool Copyright Protection Loaded');
+            console.log('🤖 Automation functions available: gemloginHideOverlay(), gemloginShowOverlay()');
+            
             // Disable right click
             document.addEventListener('contextmenu', function(e) {
-                e.preventDefault();
-                return false;
-            });
-
-            // Disable F12, Ctrl+Shift+I, Ctrl+U, etc.
-            document.addEventListener('keydown', function(e) {
-                // F12 or Ctrl+Shift+I or Ctrl+U
-                if (e.keyCode === 123 || 
-                    (e.ctrlKey && e.shiftKey && e.keyCode === 73) ||
-                    (e.ctrlKey && e.keyCode === 85)) {
+                if (document.getElementById('gemloginOverlay').classList.contains('user-mode')) {
                     e.preventDefault();
                     return false;
                 }
             });
 
-            // Block scrolling
+            // Disable F12, Ctrl+Shift+I, Ctrl+U, etc.
+            document.addEventListener('keydown', function(e) {
+                if (document.getElementById('gemloginOverlay').classList.contains('user-mode')) {
+                    // F12 or Ctrl+Shift+I or Ctrl+U
+                    if (e.keyCode === 123 || 
+                        (e.ctrlKey && e.shiftKey && e.keyCode === 73) ||
+                        (e.ctrlKey && e.keyCode === 85)) {
+                        e.preventDefault();
+                        return false;
+                    }
+                }
+            });
+
+            // Block scrolling (only in user mode)
             document.addEventListener('wheel', function(e) {
-                e.preventDefault();
+                if (document.getElementById('gemloginOverlay').classList.contains('user-mode')) {
+                    e.preventDefault();
+                }
             }, { passive: false });
 
             document.addEventListener('touchmove', function(e) {
-                e.preventDefault();
+                if (document.getElementById('gemloginOverlay').classList.contains('user-mode')) {
+                    e.preventDefault();
+                }
             }, { passive: false });
 
-            // Block mouse interactions
+            // Block mouse interactions (only in user mode)
             document.addEventListener('mousedown', function(e) {
-                if (e.target.closest('.gemlogin-overlay')) {
+                var overlay = document.getElementById('gemloginOverlay');
+                if (overlay && overlay.classList.contains('user-mode') && e.target.closest('.gemlogin-overlay')) {
                     e.preventDefault();
                     e.stopPropagation();
                 }
             });
 
             document.addEventListener('click', function(e) {
-                if (e.target.closest('.gemlogin-overlay')) {
+                var overlay = document.getElementById('gemloginOverlay');
+                if (overlay && overlay.classList.contains('user-mode') && e.target.closest('.gemlogin-overlay')) {
                     e.preventDefault();
                     e.stopPropagation();
                 }
             });
 
-            // Block keyboard
+            // Block keyboard (only in user mode)
             document.addEventListener('keydown', function(e) {
-                e.preventDefault();
-                e.stopPropagation();
+                if (document.getElementById('gemloginOverlay').classList.contains('user-mode')) {
+                    e.preventDefault();
+                    e.stopPropagation();
+                }
             });
 
             document.addEventListener('keyup', function(e) {
-                e.preventDefault();
-                e.stopPropagation();
+                if (document.getElementById('gemloginOverlay').classList.contains('user-mode')) {
+                    e.preventDefault();
+                    e.stopPropagation();
+                }
             });
 
-            // Block text selection
+            // Block text selection (only in user mode)
             document.addEventListener('selectstart', function(e) {
-                e.preventDefault();
+                if (document.getElementById('gemloginOverlay').classList.contains('user-mode')) {
+                    e.preventDefault();
+                }
             });
 
-            // Block drag
+            // Block drag (only in user mode)
             document.addEventListener('dragstart', function(e) {
-                e.preventDefault();
+                if (document.getElementById('gemloginOverlay').classList.contains('user-mode')) {
+                    e.preventDefault();
+                }
             });
 
             // Auto focus overlay to capture all events
             setTimeout(function() {
-                document.getElementById('gemloginOverlay').focus();
+                var overlay = document.getElementById('gemloginOverlay');
+                if (overlay) {
+                    overlay.focus();
+                }
             }, 100);
+
+            // Status monitor (for debugging)
+            setInterval(function() {
+                var status = window.gemloginGetStatus();
+                // console.log('🔍 Overlay Status:', status);
+            }, 5000);
         });
 
         // Advanced interaction blocking
         (function() {
             'use strict';
             
-            // Override common functions
-            window.alert = function() { return false; };
-            window.confirm = function() { return false; };
-            window.prompt = function() { return false; };
+            // Override common functions (only when in user mode)
+            var originalAlert = window.alert;
+            var originalConfirm = window.confirm;
+            var originalPrompt = window.prompt;
             
-            // Block console access
+            window.alert = function() { 
+                if (document.getElementById('gemloginOverlay').classList.contains('user-mode')) {
+                    return false; 
+                }
+                return originalAlert.apply(window, arguments);
+            };
+            
+            window.confirm = function() { 
+                if (document.getElementById('gemloginOverlay').classList.contains('user-mode')) {
+                    return false; 
+                }
+                return originalConfirm.apply(window, arguments);
+            };
+            
+            window.prompt = function() { 
+                if (document.getElementById('gemloginOverlay').classList.contains('user-mode')) {
+                    return false; 
+                }
+                return originalPrompt.apply(window, arguments);
+            };
+            
+            // Block console access (only in user mode)
+            var originalConsole = window.console;
             Object.defineProperty(window, 'console', {
-                value: {},
-                writable: false,
-                configurable: false
+                get: function() {
+                    if (document.getElementById('gemloginOverlay') && 
+                        document.getElementById('gemloginOverlay').classList.contains('user-mode')) {
+                        return {};
+                    }
+                    return originalConsole;
+                },
+                set: function() {
+                    // Prevent console override
+                }
             });
         })();
+
+        // 🎨 VISUAL FEEDBACK FOR AUTOMATION
+        function addAutomationIndicator() {
+            if (!document.getElementById('automation-indicator')) {
+                var indicator = document.createElement('div');
+                indicator.id = 'automation-indicator';
+                indicator.innerHTML = '🤖';
+                indicator.style.cssText = `
+                    position: fixed;
+                    top: 20px;
+                    right: 20px;
+                    z-index: 1000000000;
+                    font-size: 24px;
+                    opacity: 0;
+                    transition: opacity 0.3s ease;
+                    pointer-events: none;
+                `;
+                document.body.appendChild(indicator);
+            }
+        }
+
+        function updateAutomationIndicator() {
+            addAutomationIndicator();
+            var indicator = document.getElementById('automation-indicator');
+            var overlay = document.getElementById('gemloginOverlay');
+            
+            if (indicator && overlay) {
+                if (overlay.classList.contains('automation-mode')) {
+                    indicator.style.opacity = '0.7';
+                } else {
+                    indicator.style.opacity = '0';
+                }
+            }
+        }
+
+        // Monitor overlay state changes
+        if (window.MutationObserver) {
+            var observer = new MutationObserver(function(mutations) {
+                mutations.forEach(function(mutation) {
+                    if (mutation.type === 'attributes' && mutation.attributeName === 'class') {
+                        updateAutomationIndicator();
+                    }
+                });
+            });
+
+            setTimeout(function() {
+                var overlay = document.getElementById('gemloginOverlay');
+                if (overlay) {
+                    observer.observe(overlay, { attributes: true });
+                    updateAutomationIndicator();
+                }
+            }, 100);
+        }
     </script>
 </body>
 </html>
