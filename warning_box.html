@@ -1,1 +1,328 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Gemlogin Tool Warning</title>
+    <style>
+        @import url('https://fonts.googleapis.com/css2?family=Orbitron:wght@400;700;900&family=Poppins:wght@300;400;500;600&display=swap');
 
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        .gemlogin-overlay {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100vw;
+            height: 100vh;
+            background: rgba(0, 0, 0, 0.95);
+            backdrop-filter: blur(10px);
+            z-index: 999999999;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            font-family: 'Poppins', sans-serif;
+            animation: fadeIn 0.5s ease-in;
+        }
+
+        @keyframes fadeIn {
+            from { opacity: 0; }
+            to { opacity: 1; }
+        }
+
+        .gemlogin-warning-box {
+            background: linear-gradient(145deg, #1a1a2e, #16213e);
+            border: 2px solid #0f3460;
+            border-radius: 20px;
+            padding: 40px;
+            max-width: 500px;
+            text-align: center;
+            box-shadow: 
+                0 20px 40px rgba(0, 0, 0, 0.7),
+                0 0 0 1px rgba(255, 255, 255, 0.1),
+                inset 0 1px 0 rgba(255, 255, 255, 0.1);
+            animation: slideUp 0.6s ease-out;
+            position: relative;
+            overflow: hidden;
+        }
+
+        @keyframes slideUp {
+            from {
+                transform: translateY(50px);
+                opacity: 0;
+            }
+            to {
+                transform: translateY(0);
+                opacity: 1;
+            }
+        }
+
+        .gemlogin-warning-box::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: -100%;
+            width: 100%;
+            height: 100%;
+            background: linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.1), transparent);
+            animation: shine 3s infinite;
+        }
+
+        @keyframes shine {
+            0% { left: -100%; }
+            100% { left: 100%; }
+        }
+
+        .gemlogin-title {
+            font-family: 'Orbitron', monospace;
+            font-size: 2.5em;
+            font-weight: 900;
+            color: #00d4ff;
+            margin-bottom: 10px;
+            text-shadow: 
+                0 0 10px #00d4ff,
+                0 0 20px #00d4ff,
+                0 0 30px #00d4ff;
+            animation: glow 2s ease-in-out infinite alternate;
+        }
+
+        @keyframes glow {
+            from { 
+                text-shadow: 
+                    0 0 10px #00d4ff,
+                    0 0 20px #00d4ff,
+                    0 0 30px #00d4ff;
+            }
+            to { 
+                text-shadow: 
+                    0 0 20px #00d4ff,
+                    0 0 30px #00d4ff,
+                    0 0 40px #00d4ff;
+            }
+        }
+
+        .gemlogin-dev {
+            font-family: 'Orbitron', monospace;
+            font-size: 1.2em;
+            font-weight: 700;
+            margin-bottom: 30px;
+            background: linear-gradient(
+                45deg,
+                #ff0000, #ff7f00, #ffff00, #00ff00, 
+                #0000ff, #4b0082, #9400d3, #ff0000
+            );
+            background-size: 400% 400%;
+            -webkit-background-clip: text;
+            background-clip: text;
+            -webkit-text-fill-color: transparent;
+            animation: rainbowFade 3s ease-in-out infinite;
+            text-shadow: 0 0 30px rgba(255, 255, 255, 0.5);
+        }
+
+        @keyframes rainbowFade {
+            0% { 
+                background-position: 0% 50%;
+                filter: hue-rotate(0deg);
+            }
+            50% { 
+                background-position: 100% 50%;
+                filter: hue-rotate(180deg);
+            }
+            100% { 
+                background-position: 0% 50%;
+                filter: hue-rotate(360deg);
+            }
+        }
+
+        .gemlogin-message {
+            color: #ffffff;
+            font-size: 1.1em;
+            font-weight: 400;
+            line-height: 1.6;
+            margin-bottom: 20px;
+            text-shadow: 0 1px 2px rgba(0, 0, 0, 0.5);
+        }
+
+        .gemlogin-warning-icon {
+            font-size: 3em;
+            margin-bottom: 20px;
+            animation: pulse 2s infinite;
+        }
+
+        @keyframes pulse {
+            0%, 100% { 
+                transform: scale(1);
+                opacity: 1;
+            }
+            50% { 
+                transform: scale(1.1);
+                opacity: 0.8;
+            }
+        }
+
+        .gemlogin-footer {
+            margin-top: 20px;
+            color: #888;
+            font-size: 0.9em;
+            font-style: italic;
+        }
+
+        .gemlogin-loading {
+            margin-top: 20px;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            gap: 5px;
+        }
+
+        .gemlogin-dot {
+            width: 8px;
+            height: 8px;
+            border-radius: 50%;
+            background: #00d4ff;
+            animation: loadingDots 1.4s infinite both;
+        }
+
+        .gemlogin-dot:nth-child(1) { animation-delay: -0.32s; }
+        .gemlogin-dot:nth-child(2) { animation-delay: -0.16s; }
+        .gemlogin-dot:nth-child(3) { animation-delay: 0s; }
+
+        @keyframes loadingDots {
+            0%, 80%, 100% {
+                transform: scale(0);
+                opacity: 0.5;
+            }
+            40% {
+                transform: scale(1);
+                opacity: 1;
+            }
+        }
+
+        /* Block all interactions */
+        .gemlogin-overlay * {
+            pointer-events: none;
+            user-select: none;
+            -webkit-user-select: none;
+            -moz-user-select: none;
+            -ms-user-select: none;
+        }
+
+        .gemlogin-overlay {
+            pointer-events: auto;
+        }
+    </style>
+</head>
+<body>
+    <div class="gemlogin-overlay" id="gemloginOverlay">
+        <div class="gemlogin-warning-box">
+            <div class="gemlogin-warning-icon">⚠️</div>
+            <h1 class="gemlogin-title">GEMLOGIN TOOL</h1>
+            <div class="gemlogin-dev">Dev TuanHaiDz</div>
+            <p class="gemlogin-message">
+                Vui lòng không minimize hay tắt browser ảo này khi nó đang bypass
+            </p>
+            <div class="gemlogin-loading">
+                <div class="gemlogin-dot"></div>
+                <div class="gemlogin-dot"></div>
+                <div class="gemlogin-dot"></div>
+            </div>
+            <div class="gemlogin-footer">
+                Bot đang hoạt động tự động...
+            </div>
+        </div>
+    </div>
+
+    <script>
+        // Block all user interactions
+        document.addEventListener('DOMContentLoaded', function() {
+            // Disable right click
+            document.addEventListener('contextmenu', function(e) {
+                e.preventDefault();
+                return false;
+            });
+
+            // Disable F12, Ctrl+Shift+I, Ctrl+U, etc.
+            document.addEventListener('keydown', function(e) {
+                // F12 or Ctrl+Shift+I or Ctrl+U
+                if (e.keyCode === 123 || 
+                    (e.ctrlKey && e.shiftKey && e.keyCode === 73) ||
+                    (e.ctrlKey && e.keyCode === 85)) {
+                    e.preventDefault();
+                    return false;
+                }
+            });
+
+            // Block scrolling
+            document.addEventListener('wheel', function(e) {
+                e.preventDefault();
+            }, { passive: false });
+
+            document.addEventListener('touchmove', function(e) {
+                e.preventDefault();
+            }, { passive: false });
+
+            // Block mouse interactions
+            document.addEventListener('mousedown', function(e) {
+                if (e.target.closest('.gemlogin-overlay')) {
+                    e.preventDefault();
+                    e.stopPropagation();
+                }
+            });
+
+            document.addEventListener('click', function(e) {
+                if (e.target.closest('.gemlogin-overlay')) {
+                    e.preventDefault();
+                    e.stopPropagation();
+                }
+            });
+
+            // Block keyboard
+            document.addEventListener('keydown', function(e) {
+                e.preventDefault();
+                e.stopPropagation();
+            });
+
+            document.addEventListener('keyup', function(e) {
+                e.preventDefault();
+                e.stopPropagation();
+            });
+
+            // Block text selection
+            document.addEventListener('selectstart', function(e) {
+                e.preventDefault();
+            });
+
+            // Block drag
+            document.addEventListener('dragstart', function(e) {
+                e.preventDefault();
+            });
+
+            // Auto focus overlay to capture all events
+            setTimeout(function() {
+                document.getElementById('gemloginOverlay').focus();
+            }, 100);
+        });
+
+        // Advanced interaction blocking
+        (function() {
+            'use strict';
+            
+            // Override common functions
+            window.alert = function() { return false; };
+            window.confirm = function() { return false; };
+            window.prompt = function() { return false; };
+            
+            // Block console access
+            Object.defineProperty(window, 'console', {
+                value: {},
+                writable: false,
+                configurable: false
+            });
+        })();
+    </script>
+</body>
+</html>
