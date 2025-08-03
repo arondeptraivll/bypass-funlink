@@ -50,69 +50,73 @@
     </style>
 
     <script>
-        (function() {
-            let countdownInterval;
+(function() {
+    let countdownInterval;
+    
+    function debugPage() {
+        console.log('=== GemLogin Debug Info ===');
+        console.log('Current URL:', window.location.href);
+        console.log('Page loaded:', document.readyState);
+        
+        // Tìm tất cả element có id chứa "traffic"
+        const trafficIds = document.querySelectorAll('[id*="traffic"]');
+        console.log('Elements with traffic in ID:', trafficIds);
+        
+        // Tìm tất cả element có text chứa số
+        const allElements = Array.from(document.querySelectorAll('*'));
+        const elementsWithNumbers = allElements.filter(el => {
+            const text = el.textContent || el.innerText || '';
+            return /\d+/.test(text) && text.length < 50; // Chỉ lấy text ngắn
+        });
+        console.log('Elements with numbers:', elementsWithNumbers.slice(0, 10)); // Chỉ log 10 đầu
+        
+        // Thử XPath cụ thể
+        const xpathResult = document.evaluate('//*[@id="traffic-button__content"]', document, null, XPathResult.FIRST_ORDERED_NODE_TYPE, null).singleNodeValue;
+        console.log('XPath result:', xpathResult);
+        
+        console.log('=== End Debug ===');
+    }
+    
+    function updateCountdown() {
+        const countdownDisplay = document.getElementById('gemlogin-countdown');
+        
+        // Thử XPath trước
+        let element = document.evaluate('//*[@id="traffic-button__content"]', document, null, XPathResult.FIRST_ORDERED_NODE_TYPE, null).singleNodeValue;
+        
+        if (element) {
+            const text = element.textContent || element.innerText || '';
+            const timeMatch = text.match(/(\d+)/);
             
-            function getElementByXPath(xpath) {
-                return document.evaluate(xpath, document, null, XPathResult.FIRST_ORDERED_NODE_TYPE, null).singleNodeValue;
+            if (timeMatch) {
+                const seconds = parseInt(timeMatch[1]);
+                countdownDisplay.innerHTML = `Vui lòng chờ ${seconds}s`;
+            } else {
+                countdownDisplay.innerHTML = `Text: "${text}"`;
             }
-            
-            function updateCountdown() {
-                try {
-                    // Sử dụng XPath chính xác
-                    const codeButton = getElementByXPath('//*[@id="traffic-button__content"]');
-                    const countdownDisplay = document.getElementById('gemlogin-countdown');
-                    
-                    if (codeButton && countdownDisplay) {
-                        const buttonText = codeButton.textContent || codeButton.innerText || '';
-                        console.log('GemLogin: Button text:', buttonText); // Debug log
-                        
-                        // Tìm số trong text
-                        const timeMatch = buttonText.match(/(\d+)/);
-                        
-                        if (timeMatch) {
-                            const seconds = parseInt(timeMatch[1]);
-                            if (seconds > 0) {
-                                countdownDisplay.innerHTML = `Vui lòng chờ ${seconds}s`;
-                            } else {
-                                countdownDisplay.innerHTML = '✅ Sẵn sàng lấy mã!';
-                            }
-                        } else if (/lấy mã|get code|nhận mã/i.test(buttonText)) {
-                            countdownDisplay.innerHTML = '✅ Có thể lấy mã!';
-                        } else if (buttonText.trim() === '') {
-                            countdownDisplay.innerHTML = '🔍 Đang tải...';
-                        } else {
-                            countdownDisplay.innerHTML = '🔍 Đang kiểm tra...';
-                        }
-                    } else {
-                        if (countdownDisplay) {
-                            countdownDisplay.innerHTML = '⏳ Chờ tải trang...';
-                        }
-                    }
-                } catch (error) {
-                    console.log('GemLogin: Error checking countdown:', error);
-                    const countdownDisplay = document.getElementById('gemlogin-countdown');
-                    if (countdownDisplay) {
-                        countdownDisplay.innerHTML = '❌ Lỗi kiểm tra';
-                    }
-                }
-            }
-            
-            // Bắt đầu kiểm tra mỗi 0.5 giây
-            countdownInterval = setInterval(updateCountdown, 500);
-            updateCountdown(); // Chạy ngay lập tức
-            
-            // Tự động ẩn sau 5 phút (300 giây)
-            setTimeout(function() {
-                clearInterval(countdownInterval);
-                const overlay = document.getElementById('gemlogin-warning-overlay');
-                if (overlay) {
-                    overlay.style.opacity = '0';
-                    setTimeout(() => overlay.remove(), 500);
-                }
-            }, 300000);
-            
-        })();
-    </script>
+        } else {
+            // Nếu không tìm thấy, hiển thị info debug
+            const allTraffic = document.querySelectorAll('[id*="traffic"], [class*="traffic"]');
+            countdownDisplay.innerHTML = `🔍 Không tìm thấy element! (${allTraffic.length} traffic elements found)`;
+        }
+    }
+    
+    // Debug ngay lập tức
+    debugPage();
+    
+    // Bắt đầu check sau 2 giây
+    setTimeout(() => {
+        countdownInterval = setInterval(updateCountdown, 500);
+        updateCountdown();
+    }, 2000);
+    
+    // Auto hide sau 5 phút
+    setTimeout(() => {
+        if (countdownInterval) clearInterval(countdownInterval);
+        const overlay = document.getElementById('gemlogin-warning-overlay');
+        if (overlay) overlay.remove();
+    }, 300000);
+    
+})();
+</script>
 </body>
 </html>
