@@ -53,61 +53,66 @@
 (function() {
     let countdownInterval;
     
-    function debugPage() {
-        console.log('=== GemLogin Debug Info ===');
-        console.log('Current URL:', window.location.href);
-        console.log('Page loaded:', document.readyState);
-        
-        // Tìm tất cả element có id chứa "traffic"
-        const trafficIds = document.querySelectorAll('[id*="traffic"]');
-        console.log('Elements with traffic in ID:', trafficIds);
-        
-        // Tìm tất cả element có text chứa số
-        const allElements = Array.from(document.querySelectorAll('*'));
-        const elementsWithNumbers = allElements.filter(el => {
-            const text = el.textContent || el.innerText || '';
-            return /\d+/.test(text) && text.length < 50; // Chỉ lấy text ngắn
-        });
-        console.log('Elements with numbers:', elementsWithNumbers.slice(0, 10)); // Chỉ log 10 đầu
-        
-        // Thử XPath cụ thể
-        const xpathResult = document.evaluate('//*[@id="traffic-button__content"]', document, null, XPathResult.FIRST_ORDERED_NODE_TYPE, null).singleNodeValue;
-        console.log('XPath result:', xpathResult);
-        
-        console.log('=== End Debug ===');
-    }
-    
-    function updateCountdown() {
-        const countdownDisplay = document.getElementById('gemlogin-countdown');
-        
-        // Thử XPath trước
-        let element = document.evaluate('//*[@id="traffic-button__content"]', document, null, XPathResult.FIRST_ORDERED_NODE_TYPE, null).singleNodeValue;
-        
-        if (element) {
-            const text = element.textContent || element.innerText || '';
-            const timeMatch = text.match(/(\d+)/);
-            
-            if (timeMatch) {
-                const seconds = parseInt(timeMatch[1]);
-                countdownDisplay.innerHTML = `Vui lòng chờ ${seconds}s`;
-            } else {
-                countdownDisplay.innerHTML = `Text: "${text}"`;
+    function getCountdownFromParent() {
+        try {
+            // Thử truy cập parent window
+            if (window.parent && window.parent !== window) {
+                const parentDoc = window.parent.document;
+                const element = parentDoc.evaluate('//*[@id="traffic-button__content"]', parentDoc, null, XPathResult.FIRST_ORDERED_NODE_TYPE, null).singleNodeValue;
+                if (element) {
+                    return element.textContent || element.innerText || '';
+                }
             }
-        } else {
-            // Nếu không tìm thấy, hiển thị info debug
-            const allTraffic = document.querySelectorAll('[id*="traffic"], [class*="traffic"]');
-            countdownDisplay.innerHTML = `🔍 Không tìm thấy element! (${allTraffic.length} traffic elements found)`;
+            
+            // Thử truy cập chính window này
+            const element = document.evaluate('//*[@id="traffic-button__content"]', document, null, XPathResult.FIRST_ORDERED_NODE_TYPE, null).singleNodeValue;
+            if (element) {
+                return element.textContent || element.innerText || '';
+            }
+            
+            return null;
+        } catch (error) {
+            console.log('GemLogin: Cross-frame access denied');
+            return null;
         }
     }
     
-    // Debug ngay lập tức
-    debugPage();
+    function updateCountdown() {
+        try {
+            const countdownDisplay = document.getElementById('gemlogin-countdown');
+            const countdownText = getCountdownFromParent();
+            
+            if (countdownText && countdownDisplay) {
+                const timeMatch = countdownText.match(/(\d+)/);
+                
+                if (timeMatch) {
+                    const seconds = parseInt(timeMatch[1]);
+                    if (seconds > 0) {
+                        countdownDisplay.innerHTML = `Vui lòng chờ ${seconds}s`;
+                        countdownDisplay.style.color = '#ffff00';
+                    } else {
+                        countdownDisplay.innerHTML = '✅ Sẵn sàng!';
+                        countdownDisplay.style.color = '#00ff00';
+                    }
+                } else if (/lấy mã|get code/i.test(countdownText)) {
+                    countdownDisplay.innerHTML = '✅ Có thể lấy mã!';
+                    countdownDisplay.style.color = '#00ff00';
+                } else {
+                    countdownDisplay.innerHTML = `🔍 Text: "${countdownText}"`;
+                    countdownDisplay.style.color = '#ff9900';
+                }
+            } else if (countdownDisplay) {
+                countdownDisplay.innerHTML = '🔍 Tìm element trong parent...';
+                countdownDisplay.style.color = '#ff6666';
+            }
+        } catch (error) {
+            console.log('GemLogin: Error updating countdown:', error);
+        }
+    }
     
-    // Bắt đầu check sau 2 giây
-    setTimeout(() => {
-        countdownInterval = setInterval(updateCountdown, 500);
-        updateCountdown();
-    }, 2000);
+    // Bắt đầu check
+    countdownInterval = setInterval(updateCountdown, 500);
+    updateCountdown();
     
     // Auto hide sau 5 phút
     setTimeout(() => {
