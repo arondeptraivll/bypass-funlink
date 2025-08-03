@@ -3,493 +3,277 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Gemlogin Tool Warning</title>
+    <title>GemLogin Tool Warning</title>
     <style>
-        @import url('https://fonts.googleapis.com/css2?family=Orbitron:wght@400;700;900&family=Poppins:wght@300;400;500;600&display=swap');
-
+        /* Reset và tách biệt hoàn toàn */
         * {
-            margin: 0;
-            padding: 0;
             box-sizing: border-box;
         }
-
+        
+        /* Overlay toàn màn hình */
         .gemlogin-overlay {
             position: fixed;
             top: 0;
             left: 0;
-            width: 100vw;
-            height: 100vh;
-            background: rgba(0, 0, 0, 0.95);
-            backdrop-filter: blur(10px);
-            z-index: 999999999;
+            width: 100%;
+            height: 100%;
+            background: rgba(0, 0, 0, 0.7);
+            z-index: 999999;
             display: flex;
             justify-content: center;
             align-items: center;
-            font-family: 'Poppins', sans-serif;
-            animation: fadeIn 0.5s ease-in;
-            transition: opacity 0.3s ease;
+            font-family: 'Arial', sans-serif;
         }
-
-        @keyframes fadeIn {
-            from { opacity: 0; }
-            to { opacity: 1; }
-        }
-
+        
+        /* Box thông báo */
         .gemlogin-warning-box {
-            background: linear-gradient(145deg, #1a1a2e, #16213e);
-            border: 2px solid #0f3460;
-            border-radius: 20px;
-            padding: 40px;
-            max-width: 500px;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            border-radius: 15px;
+            padding: 30px;
+            max-width: 400px;
+            width: 90%;
             text-align: center;
-            box-shadow: 
-                0 20px 40px rgba(0, 0, 0, 0.7),
-                0 0 0 1px rgba(255, 255, 255, 0.1),
-                inset 0 1px 0 rgba(255, 255, 255, 0.1);
-            animation: slideUp 0.6s ease-out;
-            position: relative;
-            overflow: hidden;
+            box-shadow: 0 20px 40px rgba(0, 0, 0, 0.3);
+            border: 2px solid rgba(255, 255, 255, 0.2);
+            backdrop-filter: blur(10px);
+            animation: slideIn 0.5s ease-out;
         }
-
-        @keyframes slideUp {
+        
+        /* Animation slide in */
+        @keyframes slideIn {
             from {
-                transform: translateY(50px);
                 opacity: 0;
+                transform: translateY(-50px) scale(0.9);
             }
             to {
-                transform: translateY(0);
                 opacity: 1;
+                transform: translateY(0) scale(1);
             }
         }
-
-        .gemlogin-warning-box::before {
-            content: '';
-            position: absolute;
-            top: 0;
-            left: -100%;
-            width: 100%;
-            height: 100%;
-            background: linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.1), transparent);
-            animation: shine 3s infinite;
-        }
-
-        @keyframes shine {
-            0% { left: -100%; }
-            100% { left: 100%; }
-        }
-
+        
+        /* Tiêu đề */
         .gemlogin-title {
-            font-family: 'Orbitron', monospace;
-            font-size: 2.5em;
-            font-weight: 900;
-            color: #00d4ff;
+            font-size: 28px;
+            font-weight: bold;
+            color: white;
             margin-bottom: 10px;
-            text-shadow: 
-                0 0 10px #00d4ff,
-                0 0 20px #00d4ff,
-                0 0 30px #00d4ff;
-            animation: glow 2s ease-in-out infinite alternate;
+            text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.5);
+            letter-spacing: 1px;
         }
-
-        @keyframes glow {
-            from { 
-                text-shadow: 
-                    0 0 10px #00d4ff,
-                    0 0 20px #00d4ff,
-                    0 0 30px #00d4ff;
-            }
-            to { 
-                text-shadow: 
-                    0 0 20px #00d4ff,
-                    0 0 30px #00d4ff,
-                    0 0 40px #00d4ff;
-            }
-        }
-
-        .gemlogin-dev {
-            font-family: 'Orbitron', monospace;
-            font-size: 1.2em;
-            font-weight: 700;
-            margin-bottom: 30px;
-            background: linear-gradient(
-                45deg,
-                #ff0000, #ff7f00, #ffff00, #00ff00, 
-                #0000ff, #4b0082, #9400d3, #ff0000
-            );
+        
+        /* Caption với hiệu ứng cầu vồng */
+        .gemlogin-caption {
+            font-size: 14px;
+            margin-bottom: 20px;
+            background: linear-gradient(45deg, #ff0000, #ff7f00, #ffff00, #00ff00, #0000ff, #4b0082, #9400d3);
             background-size: 400% 400%;
             -webkit-background-clip: text;
             background-clip: text;
             -webkit-text-fill-color: transparent;
             animation: rainbowFade 3s ease-in-out infinite;
-            text-shadow: 0 0 30px rgba(255, 255, 255, 0.5);
+            font-weight: 600;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
         }
-
+        
+        /* Hiệu ứng cầu vồng fade */
         @keyframes rainbowFade {
-            0% { 
+            0%, 100% {
                 background-position: 0% 50%;
-                filter: hue-rotate(0deg);
             }
-            50% { 
+            50% {
                 background-position: 100% 50%;
-                filter: hue-rotate(180deg);
-            }
-            100% { 
-                background-position: 0% 50%;
-                filter: hue-rotate(360deg);
             }
         }
-
-        .gemlogin-message {
+        
+        /* Nội dung chính */
+        .gemlogin-content {
+            color: white;
+            font-size: 16px;
+            line-height: 1.5;
+            margin-bottom: 20px;
+            text-shadow: 1px 1px 2px rgba(0, 0, 0, 0.5);
+        }
+        
+        /* Phần countdown */
+        .gemlogin-countdown {
+            background: rgba(255, 255, 255, 0.2);
+            border-radius: 10px;
+            padding: 15px;
+            margin-top: 15px;
+            border: 1px solid rgba(255, 255, 255, 0.3);
+        }
+        
+        .countdown-label {
             color: #ffffff;
-            font-size: 1.1em;
-            font-weight: 400;
-            line-height: 1.6;
-            margin-bottom: 20px;
-            text-shadow: 0 1px 2px rgba(0, 0, 0, 0.5);
+            font-size: 14px;
+            margin-bottom: 5px;
+            opacity: 0.9;
         }
-
-        .gemlogin-warning-icon {
-            font-size: 3em;
-            margin-bottom: 20px;
-            animation: pulse 2s infinite;
+        
+        .countdown-time {
+            color: #ffff00;
+            font-size: 24px;
+            font-weight: bold;
+            text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.5);
+            animation: pulse 1s ease-in-out infinite;
         }
-
+        
+        /* Hiệu ứng nhấp nháy cho countdown */
         @keyframes pulse {
-            0%, 100% { 
+            0%, 100% {
                 transform: scale(1);
+            }
+            50% {
+                transform: scale(1.05);
+            }
+        }
+        
+        /* Status indicator */
+        .status-indicator {
+            display: inline-block;
+            width: 10px;
+            height: 10px;
+            background: #00ff00;
+            border-radius: 50%;
+            margin-right: 8px;
+            animation: blink 1s infinite;
+        }
+        
+        @keyframes blink {
+            0%, 50% {
                 opacity: 1;
             }
-            50% { 
-                transform: scale(1.1);
-                opacity: 0.8;
+            51%, 100% {
+                opacity: 0.3;
             }
         }
-
-        .gemlogin-footer {
-            margin-top: 20px;
-            color: #888;
-            font-size: 0.9em;
-            font-style: italic;
+        
+        /* Loading animation */
+        .loading-dots {
+            color: #ffffff;
+            font-size: 20px;
+            animation: loadingDots 1.5s infinite;
         }
-
-        .gemlogin-loading {
-            margin-top: 20px;
-            display: flex;
-            justify-content: center;
-            align-items: center;
-            gap: 5px;
-        }
-
-        .gemlogin-dot {
-            width: 8px;
-            height: 8px;
-            border-radius: 50%;
-            background: #00d4ff;
-            animation: loadingDots 1.4s infinite both;
-        }
-
-        .gemlogin-dot:nth-child(1) { animation-delay: -0.32s; }
-        .gemlogin-dot:nth-child(2) { animation-delay: -0.16s; }
-        .gemlogin-dot:nth-child(3) { animation-delay: 0s; }
-
+        
         @keyframes loadingDots {
-            0%, 80%, 100% {
-                transform: scale(0);
-                opacity: 0.5;
+            0%, 20% {
+                content: '.';
             }
             40% {
-                transform: scale(1);
-                opacity: 1;
+                content: '..';
             }
-        }
-
-        /* Block all interactions */
-        .gemlogin-overlay * {
-            pointer-events: none;
-            user-select: none;
-            -webkit-user-select: none;
-            -moz-user-select: none;
-            -ms-user-select: none;
-        }
-
-        .gemlogin-overlay {
-            pointer-events: auto;
-        }
-
-        /* Automation mode styles */
-        .gemlogin-overlay.automation-mode {
-            opacity: 0.3;
-            pointer-events: none;
-        }
-
-        .gemlogin-overlay.user-mode {
-            opacity: 1;
-            pointer-events: auto;
+            60%, 100% {
+                content: '...';
+            }
         }
     </style>
 </head>
 <body>
-    <div class="gemlogin-overlay user-mode" id="gemloginOverlay">
+    <div class="gemlogin-overlay">
         <div class="gemlogin-warning-box">
-            <div class="gemlogin-warning-icon">⚠️</div>
-            <h1 class="gemlogin-title">GEMLOGIN TOOL</h1>
-            <div class="gemlogin-dev">Dev TuanHaiDz</div>
-            <p class="gemlogin-message">
-                Vui lòng không minimize hay tắt browser ảo này khi nó đang bypass
-            </p>
-            <div class="gemlogin-loading">
-                <div class="gemlogin-dot"></div>
-                <div class="gemlogin-dot"></div>
-                <div class="gemlogin-dot"></div>
+            <div class="gemlogin-title">🛡️ GEMLOGIN TOOL</div>
+            <div class="gemlogin-caption">Created by TuanHaiDZ</div>
+            
+            <div class="gemlogin-content">
+                <span class="status-indicator"></span>
+                <strong>TOOL ĐANG BYPASS</strong><br>
+                VUI LÒNG KHÔNG MINIMIZE HAY TẮT BROWSER NÀY
             </div>
-            <div class="gemlogin-footer">
-                Bot đang hoạt động tự động...
+            
+            <div class="gemlogin-countdown">
+                <div class="countdown-label">⏱️ Thời gian chờ mã:</div>
+                <div class="countdown-time" id="countdownDisplay">
+                    <span class="loading-dots">Đang kiểm tra</span>
+                </div>
             </div>
         </div>
     </div>
 
     <script>
-        // 🤖 AUTOMATION BYPASS FUNCTIONS
-        window.gemloginHideOverlay = function() {
-            var overlay = document.getElementById('gemloginOverlay');
-            if (overlay) {
-                overlay.classList.remove('user-mode');
-                overlay.classList.add('automation-mode');
-                overlay.style.pointerEvents = 'none';
-                overlay.style.opacity = '0.3';
-                console.log('🤖 Gemlogin Overlay: Automation mode enabled');
-            }
-        };
-
-        window.gemloginShowOverlay = function() {
-            var overlay = document.getElementById('gemloginOverlay');
-            if (overlay) {
-                overlay.classList.remove('automation-mode');
-                overlay.classList.add('user-mode');
-                overlay.style.pointerEvents = 'auto';
-                overlay.style.opacity = '1';
-                console.log('🛡️ Gemlogin Overlay: User protection mode enabled');
-            }
-        };
-
-        // 🔧 UTILITY FUNCTIONS
-        window.gemloginToggleOverlay = function() {
-            var overlay = document.getElementById('gemloginOverlay');
-            if (overlay) {
-                if (overlay.classList.contains('automation-mode')) {
-                    window.gemloginShowOverlay();
-                } else {
-                    window.gemloginHideOverlay();
-                }
-            }
-        };
-
-        window.gemloginGetStatus = function() {
-            var overlay = document.getElementById('gemloginOverlay');
-            if (overlay) {
-                return overlay.classList.contains('automation-mode') ? 'automation' : 'user-protection';
-            }
-            return 'unknown';
-        };
-
-        // Block all user interactions
-        document.addEventListener('DOMContentLoaded', function() {
-            console.log('🛡️ Gemlogin Tool Copyright Protection Loaded');
-            console.log('🤖 Automation functions available: gemloginHideOverlay(), gemloginShowOverlay()');
-            
-            // Disable right click
-            document.addEventListener('contextmenu', function(e) {
-                if (document.getElementById('gemloginOverlay').classList.contains('user-mode')) {
-                    e.preventDefault();
-                    return false;
-                }
-            });
-
-            // Disable F12, Ctrl+Shift+I, Ctrl+U, etc.
-            document.addEventListener('keydown', function(e) {
-                if (document.getElementById('gemloginOverlay').classList.contains('user-mode')) {
-                    // F12 or Ctrl+Shift+I or Ctrl+U
-                    if (e.keyCode === 123 || 
-                        (e.ctrlKey && e.shiftKey && e.keyCode === 73) ||
-                        (e.ctrlKey && e.keyCode === 85)) {
-                        e.preventDefault();
-                        return false;
-                    }
-                }
-            });
-
-            // Block scrolling (only in user mode)
-            document.addEventListener('wheel', function(e) {
-                if (document.getElementById('gemloginOverlay').classList.contains('user-mode')) {
-                    e.preventDefault();
-                }
-            }, { passive: false });
-
-            document.addEventListener('touchmove', function(e) {
-                if (document.getElementById('gemloginOverlay').classList.contains('user-mode')) {
-                    e.preventDefault();
-                }
-            }, { passive: false });
-
-            // Block mouse interactions (only in user mode)
-            document.addEventListener('mousedown', function(e) {
-                var overlay = document.getElementById('gemloginOverlay');
-                if (overlay && overlay.classList.contains('user-mode') && e.target.closest('.gemlogin-overlay')) {
-                    e.preventDefault();
-                    e.stopPropagation();
-                }
-            });
-
-            document.addEventListener('click', function(e) {
-                var overlay = document.getElementById('gemloginOverlay');
-                if (overlay && overlay.classList.contains('user-mode') && e.target.closest('.gemlogin-overlay')) {
-                    e.preventDefault();
-                    e.stopPropagation();
-                }
-            });
-
-            // Block keyboard (only in user mode)
-            document.addEventListener('keydown', function(e) {
-                if (document.getElementById('gemloginOverlay').classList.contains('user-mode')) {
-                    e.preventDefault();
-                    e.stopPropagation();
-                }
-            });
-
-            document.addEventListener('keyup', function(e) {
-                if (document.getElementById('gemloginOverlay').classList.contains('user-mode')) {
-                    e.preventDefault();
-                    e.stopPropagation();
-                }
-            });
-
-            // Block text selection (only in user mode)
-            document.addEventListener('selectstart', function(e) {
-                if (document.getElementById('gemloginOverlay').classList.contains('user-mode')) {
-                    e.preventDefault();
-                }
-            });
-
-            // Block drag (only in user mode)
-            document.addEventListener('dragstart', function(e) {
-                if (document.getElementById('gemloginOverlay').classList.contains('user-mode')) {
-                    e.preventDefault();
-                }
-            });
-
-            // Auto focus overlay to capture all events
-            setTimeout(function() {
-                var overlay = document.getElementById('gemloginOverlay');
-                if (overlay) {
-                    overlay.focus();
-                }
-            }, 100);
-
-            // Status monitor (for debugging)
-            setInterval(function() {
-                var status = window.gemloginGetStatus();
-                // console.log('🔍 Overlay Status:', status);
-            }, 5000);
-        });
-
-        // Advanced interaction blocking
+        // Tách biệt hoàn toàn - không ảnh hưởng tới website
         (function() {
             'use strict';
             
-            // Override common functions (only when in user mode)
-            var originalAlert = window.alert;
-            var originalConfirm = window.confirm;
-            var originalPrompt = window.prompt;
+            let countdownInterval;
+            let lastDetectedTime = null;
             
-            window.alert = function() { 
-                if (document.getElementById('gemloginOverlay').classList.contains('user-mode')) {
-                    return false; 
-                }
-                return originalAlert.apply(window, arguments);
-            };
-            
-            window.confirm = function() { 
-                if (document.getElementById('gemloginOverlay').classList.contains('user-mode')) {
-                    return false; 
-                }
-                return originalConfirm.apply(window, arguments);
-            };
-            
-            window.prompt = function() { 
-                if (document.getElementById('gemloginOverlay').classList.contains('user-mode')) {
-                    return false; 
-                }
-                return originalPrompt.apply(window, arguments);
-            };
-            
-            // Block console access (only in user mode)
-            var originalConsole = window.console;
-            Object.defineProperty(window, 'console', {
-                get: function() {
-                    if (document.getElementById('gemloginOverlay') && 
-                        document.getElementById('gemloginOverlay').classList.contains('user-mode')) {
-                        return {};
+            function updateCountdown() {
+                try {
+                    // Tìm nút lấy mã - có thể thay đổi selector này tùy website
+                    const codeButton = document.querySelector('#traffic-button__content') || 
+                                     document.querySelector('[id*="traffic"]') ||
+                                     document.querySelector('[class*="countdown"]') ||
+                                     document.querySelector('[class*="timer"]');
+                    
+                    const countdownDisplay = document.getElementById('countdownDisplay');
+                    
+                    if (codeButton) {
+                        const buttonText = codeButton.textContent || codeButton.innerText;
+                        
+                        // Tìm số giây trong text
+                        const timeMatch = buttonText.match(/(\d+)/);
+                        
+                        if (timeMatch) {
+                            const seconds = parseInt(timeMatch[1]);
+                            lastDetectedTime = seconds;
+                            
+                            if (seconds > 0) {
+                                countdownDisplay.innerHTML = `
+                                    <span style="color: #ffff00;">${seconds}s</span>
+                                `;
+                            } else {
+                                countdownDisplay.innerHTML = `
+                                    <span style="color: #00ff00;">✅ Sẵn sàng lấy mã!</span>
+                                `;
+                            }
+                        } else if (buttonText.toLowerCase().includes('lấy mã') || 
+                                  buttonText.toLowerCase().includes('get code') ||
+                                  buttonText.toLowerCase().includes('continue')) {
+                            countdownDisplay.innerHTML = `
+                                <span style="color: #00ff00;">✅ Có thể lấy mã!</span>
+                            `;
+                        } else {
+                            countdownDisplay.innerHTML = `
+                                <span style="color: #ffa500;">🔍 Đang tìm mã...</span>
+                            `;
+                        }
+                    } else {
+                        countdownDisplay.innerHTML = `
+                            <span style="color: #ff6b6b;">⚠️ Chưa tìm thấy nút</span>
+                        `;
                     }
-                    return originalConsole;
-                },
-                set: function() {
-                    // Prevent console override
-                }
-            });
-        })();
-
-        // 🎨 VISUAL FEEDBACK FOR AUTOMATION
-        function addAutomationIndicator() {
-            if (!document.getElementById('automation-indicator')) {
-                var indicator = document.createElement('div');
-                indicator.id = 'automation-indicator';
-                indicator.innerHTML = '🤖';
-                indicator.style.cssText = `
-                    position: fixed;
-                    top: 20px;
-                    right: 20px;
-                    z-index: 1000000000;
-                    font-size: 24px;
-                    opacity: 0;
-                    transition: opacity 0.3s ease;
-                    pointer-events: none;
-                `;
-                document.body.appendChild(indicator);
-            }
-        }
-
-        function updateAutomationIndicator() {
-            addAutomationIndicator();
-            var indicator = document.getElementById('automation-indicator');
-            var overlay = document.getElementById('gemloginOverlay');
-            
-            if (indicator && overlay) {
-                if (overlay.classList.contains('automation-mode')) {
-                    indicator.style.opacity = '0.7';
-                } else {
-                    indicator.style.opacity = '0';
+                } catch (error) {
+                    console.log('GemLogin Tool: Đang kiểm tra...', error);
+                    document.getElementById('countdownDisplay').innerHTML = `
+                        <span style="color: #ffa500;">🔄 Đang kiểm tra...</span>
+                    `;
                 }
             }
-        }
-
-        // Monitor overlay state changes
-        if (window.MutationObserver) {
-            var observer = new MutationObserver(function(mutations) {
-                mutations.forEach(function(mutation) {
-                    if (mutation.type === 'attributes' && mutation.attributeName === 'class') {
-                        updateAutomationIndicator();
-                    }
-                });
+            
+            // Bắt đầu kiểm tra mỗi 0.5 giây
+            countdownInterval = setInterval(updateCountdown, 500);
+            
+            // Kiểm tra ngay lập tức
+            updateCountdown();
+            
+            // Cleanup khi trang được unload
+            window.addEventListener('beforeunload', function() {
+                if (countdownInterval) {
+                    clearInterval(countdownInterval);
+                }
             });
-
+            
+            // Auto-hide sau 5 phút để tránh làm phiền
             setTimeout(function() {
-                var overlay = document.getElementById('gemloginOverlay');
+                const overlay = document.querySelector('.gemlogin-overlay');
                 if (overlay) {
-                    observer.observe(overlay, { attributes: true });
-                    updateAutomationIndicator();
+                    overlay.style.opacity = '0';
+                    setTimeout(() => overlay.remove(), 500);
                 }
-            }, 100);
-        }
+            }, 300000); // 5 phút
+            
+        })();
     </script>
 </body>
 </html>
